@@ -1,0 +1,18 @@
+image: node:20.14.0
+
+stages:
+  - test
+  - build
+
+audit:
+  stage: test
+  image: microservices2024/pymailer:latest
+  script:
+    - npm i --package-lock-only --silent
+    - npm audit > audit.log || true
+    - python3 mailer.py "$AUDIT_EMAIL" "$AUDIT_EMAIL_PASSWORD" "$CI_PROJECT_TITLE" "$CI_COMMIT_BRANCH" "$AUDIT_RECIPIENT"
+
+sast:
+  variables:
+      SEARCH_MAX_DEPTH: 12
+
